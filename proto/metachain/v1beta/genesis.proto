@@ -1,0 +1,9 @@
+syntax = "proto3";
+package metachain.metachain.v1beta1;
+
+option go_package = "github.com/interchainberlin/metachain/x/metachain/types";
+
+// GenesisState defines the capability module's genesis state.
+message GenesisState {
+}
+
