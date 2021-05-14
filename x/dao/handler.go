@@ -1,11 +1,11 @@
-package metachain
+package dao
 
 import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/interchainberlin/metachain/x/metachain/keeper"
-	"github.com/interchainberlin/metachain/x/metachain/types"
+	"github.com/interchainberlin/metachain/x/dao/keeper"
+	"github.com/interchainberlin/metachain/x/dao/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 

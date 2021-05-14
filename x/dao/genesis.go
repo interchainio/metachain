@@ -1,9 +1,9 @@
-package metachain
+package dao
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/interchainberlin/metachain/x/metachain/keeper"
-	"github.com/interchainberlin/metachain/x/metachain/types"
+	"github.com/interchainberlin/metachain/x/dao/keeper"
+	"github.com/interchainberlin/metachain/x/dao/types"
 )
 
 // InitGenesis initializes the capability module's state from a provided genesis

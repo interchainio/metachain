@@ -7,7 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/interchainberlin/metachain/x/metachain/types"
+	"github.com/interchainberlin/metachain/x/dao/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
