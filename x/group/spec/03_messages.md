@@ -56,14 +56,6 @@ The `UpdateGroupAccountAdminRequest` can be used to update a group account admin
 
 It's expecting to fail if the signer is not the admin of the group account.
 
-## Msg/UpdateGroupAccountDecisionPolicy
-
-The `UpdateGroupAccountDecisionPolicyRequest` can be used to update a decision policy.
-
-+++ https://github.com/regen-network/regen-ledger/blob/24290a0f2b219ac831482006952cb7a11d173ecf/proto/regen/group/v1alpha1/tx.proto#L166-L178
-
-It's expecting to fail if the signer is not the admin of the group account.
-
 ## Msg/UpdateGroupAccountMetadata
 
 The `UpdateGroupAccountMetadataRequest` can be used to update a group account metadata.
@@ -73,32 +65,3 @@ The `UpdateGroupAccountMetadataRequest` can be used to update a group account me
 It's expecting to fail if:
 - new metadata length is greater than some `MaxMetadataLength`.
 - the signer is not the admin of the group.
-
-## Msg/CreateProposal
-
-A new group account can be created with the `MsgCreateProposalRequest`, which has a group account address, a list of proposers addresses, a list of messages to execute if the proposal is accepted and some optional metadata bytes.
-
-+++ https://github.com/regen-network/regen-ledger/blob/24290a0f2b219ac831482006952cb7a11d173ecf/proto/regen/group/v1alpha1/tx.proto#L203-L219
-
-It's expecting to fail if metadata length is greater than some `MaxMetadataLength`.
-
-## Msg/Vote
-
-A new vote can be created with the `MsgVoteRequest`, given a proposal id, a voter address, a choice (yes, no, veto or abstain) and some optional metadata bytes.
-
-+++ https://github.com/regen-network/regen-ledger/blob/24290a0f2b219ac831482006952cb7a11d173ecf/proto/regen/group/v1alpha1/tx.proto#L228-L242
-
-It's expecting to fail if metadata length is greater than some `MaxMetadataLength`.
-
-## Msg/Exec
-
-A proposal can be executed with the `MsgExecRequest`.
-
-+++ https://github.com/regen-network/regen-ledger/blob/24290a0f2b219ac831482006952cb7a11d173ecf/proto/regen/group/v1alpha1/tx.proto#L247-L255
-
-The messages that are part of this proposal won't be executed if:
-- the group has been modified before tally.
-- the group account has been modified before tally.
-- the proposal has not been accepted.
-- the proposal status is not closed.
-- the proposal has already been successfully executed.

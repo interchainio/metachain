@@ -33,24 +33,3 @@ The group module emits the following events:
 |----------------------------------------------|---------------|-------------------------------------------------------------------------------|
 | message                                      | action        | /regen.group.v1alpha1.Msg/UpdateGroupAccount{Admin\|Metadata\|DecisionPolicy} |
 | regen.group.v1alpha1.EventUpdateGroupAccount | address       | {groupAccountAddress}                                                         |
-
-## EventCreateProposal
-
-| Type                                     | Attribute Key | Attribute Value                          |
-|------------------------------------------|---------------|------------------------------------------|
-| message                                  | action        | /regen.group.v1alpha1.Msg/CreateProposal |
-| regen.group.v1alpha1.EventCreateProposal | proposal_id   | {proposalId}                             |
-
-## EventVote
-
-| Type                           | Attribute Key | Attribute Value                |
-|--------------------------------|---------------|--------------------------------|
-| message                        | action        | /regen.group.v1alpha1.Msg/Vote |
-| regen.group.v1alpha1.EventVote | proposal_id   | {proposalId}                   |
-
-## EventExec
-
-| Type                           | Attribute Key | Attribute Value                |
-|--------------------------------|---------------|--------------------------------|
-| message                        | action        | /regen.group.v1alpha1.Msg/Exec |
-| regen.group.v1alpha1.EventExec | proposal_id   | {proposalId}                   |
