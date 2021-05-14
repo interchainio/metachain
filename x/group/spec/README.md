@@ -5,9 +5,12 @@ parent:
   title: "group"
 -->
 
-## Abstract
+## Group
 
-This document specifies the group module.
+The following specification is a modified version. The original can be found
+[here](https://github.com/regen-network/regen-ledger/tree/v1.0.0/x/group/spec).
+
+To view the diff, click [here](./00_diff.md)
 
 This module allows the creation and management of on-chain multisig accounts and enables voting for message execution based on configurable decision policies.
 
