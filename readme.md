@@ -5,7 +5,7 @@ An experimental chain to explore governance typologies within the Cosmos
 ## Contents
 
 - Background
-  - [Groups/Gov Sync](https://github.com/cosmos/cosmos-sdk/discussions/9066)
+  - [Groups/Gov Sync Discussion](https://github.com/cosmos/cosmos-sdk/discussions/9066)
 
 - Groups Module
   - [Original](https://github.com/regen-network/regen-ledger/tree/v1.0.0/x/group/specc)
