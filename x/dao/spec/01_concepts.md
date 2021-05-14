@@ -93,31 +93,42 @@ ballots, and liquid democracy.
 
 ### Tally
 
+A tally is the underlying data struture that tracks the progress of a proposal
+over it's lifecycle.
+
 ```proto
 message Tally {
+    // the proposal the tally is tracking
     uint64 proposal_id = 1;
 
     // count is an array of the totals for each choice
     repeated uint64 count = 2;
 
+    // relevant meta data
     bytes meta_data = 3;
 }
 ```
 
 ## Vote
 
-A vote represents a choice from a member. To keep things 
+A vote represents a choice from a member for a proposal. Choices are
+intentionaly left as abstract as possible. They could be a simple binary yes/no,
+a set of multiple choices or an amount (in the case of a community spend).
+
 
 ```proto
 message Vote {
     // the member of the group that voted
     string voter = 1;
 
-    // there choice
-    uint64 choice = 2;
+    // the proposal that they are voting on
+    uint64 proposal_id = 2;
+
+    // their choice
+    uint64 choice = 3;
 
     // additional data
-    bytes meta_data = 3; 
+    bytes meta_data = 4; 
 }
 ```
 
