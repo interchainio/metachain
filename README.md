@@ -8,16 +8,19 @@ An experimental chain to explore governance typologies within the Cosmos
   - [Groups/Gov Sync Discussion](https://github.com/cosmos/cosmos-sdk/discussions/9066)
 
 - Groups Module
-  - [Original](https://github.com/regen-network/regen-ledger/tree/v1.0.0/x/group/specc)
-  - [Proposed](./x/group/spec/README.md)
+  - [Original Spec](https://github.com/regen-network/regen-ledger/tree/v1.0.0/x/group/specc)
+  - [Proposed Spec](./x/group/spec/README.md)
   - [Diff](./x/group/spec/00_diff.md)
 
 - DAO Module
   - Derived from
-    [Gov](https://github.com/cosmos/cosmos-sdk/tree/v0.42.4/x/gov/spec)
-  - [Proposed](./x/dao/spec/README.md)
+    [Gov Spec](https://github.com/cosmos/cosmos-sdk/tree/v0.42.4/x/gov/spec)
+  - [Proposed Spec](./x/dao/spec/README.md)
   - [Diff](./x/dao/spec/00_diff.md)
 
+- [Use Cases](./use_cases/README.md)
+
+- [Decision Policies](./decision_policies/README.md)
 
 ---
 
