@@ -1,0 +1,9 @@
+syntax = "proto3";
+package metachain.dao.v1beta1;
+
+option go_package = "github.com/interchainberlin/metachain/x/dao/types";
+
+// GenesisState defines the capability module's genesis state.
+message GenesisState {
+}
+

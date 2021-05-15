@@ -1,11 +1,11 @@
 syntax = "proto3";
-package metachain.metachain.v1beta1;
+package metachain.dao.v1beta1;
 
 import "cosmos/base/query/v1beta1/pagination.proto";
 // this line is used by starport scaffolding # 1
 
 
-option go_package = "github.com/interchainberlin/metachain/x/metachain/types";
+option go_package = "github.com/interchainberlin/metachain/x/dao/types";
 
 // Query defines the gRPC querier service.
 service Query {
