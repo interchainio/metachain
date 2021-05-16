@@ -22,3 +22,7 @@ has authority of the group. This allows for other cases such as off-chain
 governance (where the account of the off-chain service is used instead). It can
 also be the address of another group of another module or any other account for
 that matter.
+
+## Add Differential Groups
+
+A different

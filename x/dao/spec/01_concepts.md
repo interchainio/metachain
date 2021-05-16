@@ -10,7 +10,13 @@ A polity is a political entity, a
 
 ```proto
 message Polity {
-    group_id 
+    uint64 group_id = 1;
+
+    // decision_policy is the updated group account decision policy.
+    google.protobuf.Any decision_policy = 3 [(cosmos_proto.accepts_interface) = "DecisionPolicy"];
+    
+    // decision_policy is the updated group account decision policy.
+    google.protobuf.Any decision_policy = 3 [(cosmos_proto.accepts_interface) = "ProposalFilter"];
 }
 
 ```
@@ -34,7 +40,7 @@ message Proposal {
     // the group account that will execute the action, define 
     // the members eligible to vote as well as the proposal filter
     // and decision policy involved with the proposal
-    string group = 3;
+    uint64 group_id = 3;
 
     // the deposit associated with the proposal
     repeated sdk.Coin deposit = 4;
@@ -89,6 +95,8 @@ type DecisionPolicy interface {
     // If the result from a Vote is both complete and has passed, Execute is 
     // called which allows a decision policy to modify the set of messages before
     // they are executed
+    // TODO: We may want to consider running execute when a proposal is defeated 
+    // to allow for fallback actions to be executed
     Execute(messages []sdk.Message, tally Tally, meta []byte) []sdk.Message
 }
 
@@ -97,6 +105,9 @@ type Result struct {
     Passed bool
 }
 ```
+
+Votes are counted based on the weights of the member at the moment the proposal
+was created. 
 
 The DAO module aims to provide abstractions that allow for a wide range of
 sophisticated and nuanced decision policies such as quadratic voting, secret

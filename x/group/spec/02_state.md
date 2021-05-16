@@ -39,7 +39,14 @@ The `groupMemberTable` is a primary key table and its `PrimaryKey` is given by
 ### groupMemberByMemberIndex
 
 `groupMemberByMemberIndex` allows to retrieve group members by member address:
-`0x12 | []byte(member.Address) | PrimaryKey | byte(len(PrimaryKey)) -> []byte()`.
+`0x12 | []byte(member.Address) | PrimaryKey | byte(len(PrimaryKey)) ->
+[]byte()`.
+
+## Group Differential Table
+
+A `groupDifferentialTable` stores the differences in group membership between states
+or heights: `0x30 | []byte(GroupId) | []byte(height) -> ProtocolBuffer(Members)
+
 
 ## Group Account Table
 

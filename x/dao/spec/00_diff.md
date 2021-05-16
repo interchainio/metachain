@@ -14,7 +14,18 @@ which also housed data structures such as `Vote` and `Proposal`
 ## Proposal Filter
 
 This is a relatively novel feature (taken from
-[PolicyKit](https://policykit.readthedocs.io/en/latest/policy_model.html#filter))
-which allows for several features. Predominantly this allows for categorization
-of proposals and thus a divide and conquer form of governannce or
-representational forms of governance. A standard case would 
+[PolicyKit](https://policykit.readthedocs.io/en/latest/policy_model.html#filter)).
+Predominantly this allows for categorization of proposals and thus a divide and 
+conquer form of governannce or representational forms of governance. A standard 
+example might be to create a sub group that oversees only specific param
+proposals. It can also be used as a means of mitigating spam or settting other
+constrains (i.e. a max withdrawal amount). The interface:
+
+```golang
+type ProposalFilter interface {
+    Validate(group GroupAccount, proposal Proposal, otherProposals []Proposal) error
+}
+```
+
+Also allows for comparison with other running proposals for logic that requires
+a more complete overview of the currently running proposals within a DAO.

@@ -31,24 +31,6 @@ message Members {
     repeated Member members = 1 [(gogoproto.nullable) = false];
 }
 
-// Choice defines available types of choices for voting.
-enum Choice {
-
-    // CHOICE_UNSPECIFIED defines a no-op voting choice.
-    CHOICE_UNSPECIFIED = 0;
-
-    // CHOICE_NO defines a no voting choice.
-    CHOICE_NO = 1;
-
-    // CHOICE_YES defines a yes voting choice.
-    CHOICE_YES = 2;
-
-    // CHOICE_ABSTAIN defines an abstaining voting choice.
-    CHOICE_ABSTAIN = 3;
-
-    // CHOICE_VETO defines a voting choice with veto.
-    CHOICE_VETO = 4;
-}
 
 //
 // State
@@ -66,13 +48,11 @@ message GroupInfo {
     // metadata is any arbitrary metadata to attached to the group.
     bytes metadata = 3;
 
-    // version is used to track changes to a group's membership structure that
-    // would break existing proposals. Whenever any members weight is changed,
-    // or any member is added or removed this version is incremented and will
-    // cause proposals based on older versions of this group to fail
-    uint64 version = 4;
+    // slices keeps track of all the heights that snapshots of the membership
+    // set are stored
+    repeated uint64 slices = 4;
 
-    // total_weight is the sum of the group members' weights.
+    // total_weight is the current sum of the group members' weights.
     string total_weight = 5;
 }
 
@@ -102,12 +82,5 @@ message GroupAccountInfo {
     
     // metadata is any arbitrary metadata to attached to the group account.
     bytes metadata = 4;
-
-    // version is used to track changes to a group's GroupAccountInfo structure that
-    // would create a different result on a running proposal.
-    uint64 version = 5;
-
-    // decision_policy specifies the group account's decision policy.
-    google.protobuf.Any decision_policy = 6 [(cosmos_proto.accepts_interface) = "DecisionPolicy"];
 }
 
