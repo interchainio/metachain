@@ -36,14 +36,6 @@ service Msg {
     // UpdateGroupAccountMetadata updates a group account metadata.
     rpc UpdateGroupAccountMetadata(MsgUpdateGroupAccountMetadataRequest) returns (MsgUpdateGroupAccountMetadataResponse);
 
-    // CreateProposal submits a new proposal.
-    rpc CreateProposal(MsgCreateProposalRequest) returns (MsgCreateProposalResponse);
-
-    // Vote allows a voter to vote on a proposal.
-    rpc Vote(MsgVoteRequest) returns (MsgVoteResponse);
-
-    // Exec executes a proposal.
-    rpc Exec(MsgExecRequest) returns (MsgExecResponse);
 }
 
 //
@@ -196,63 +188,3 @@ message MsgUpdateGroupAccountMetadataRequest {
 // MsgUpdateGroupAccountMetadataResponse is the Msg/UpdateGroupAccountMetadata response type.
 message MsgUpdateGroupAccountMetadataResponse { }
 
-//
-// Proposals and Voting
-//
-
-// MsgCreateProposalRequest is the Msg/CreateProposal request type.
-message MsgCreateProposalRequest {
-    option (gogoproto.goproto_getters) = false;
-
-    // address is the group account address.
-    string address = 1;
-    
-    // proposers are the account addresses of the proposers.
-    // Proposers signatures will be counted as yes votes.
-    repeated string proposers = 2;
-    
-    // metadata is any arbitrary metadata to attached to the proposal.
-    bytes metadata = 3;
-
-    // msgs is a list of Msgs that will be executed if the proposal passes.
-    repeated google.protobuf.Any msgs = 4;
-}
-
-// MsgCreateProposalResponse is the Msg/CreateProposal response type.
-message MsgCreateProposalResponse {
-
-    // proposal is the unique ID of the proposal.
-    uint64 proposal_id = 1;
-}
-
-// MsgVoteRequest is the Msg/Vote request type.
-message MsgVoteRequest {
-
-    // proposal is the unique ID of the proposal.
-    uint64 proposal_id = 1;
-    
-    // voter is the voter account address.
-    string voter = 2;
-    
-    // choice is the voter's choice on the proposal.
-    Choice choice = 3;
-
-    // metadata is any arbitrary metadata to attached to the vote.
-    bytes metadata = 4;
-}
-
-// MsgVoteResponse is the Msg/Vote response type.
-message MsgVoteResponse { }
-
-// MsgExecRequest is the Msg/Exec request type.
-message MsgExecRequest {
-
-    // proposal is the unique ID of the proposal.
-    uint64 proposal_id = 1;
-    
-    // signer is the account address used to execute the proposal.
-    string signer = 2;
-}
-
-// MsgExecResponse is the Msg/Exec request type.
-message MsgExecResponse { }
