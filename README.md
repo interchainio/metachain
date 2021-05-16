@@ -2,13 +2,16 @@
 
 An experimental chain to explore governance typologies within the Cosmos
 
+> NOTE: Focus currently resides in design work of the spec. Implementation is currently
+> untouched. 
+
 ## Contents
 
 - Background
   - [Groups/Gov Sync Discussion](https://github.com/cosmos/cosmos-sdk/discussions/9066)
 
 - Groups Module
-  - [Original Spec](https://github.com/regen-network/regen-ledger/tree/v1.0.0/x/group/specc)
+  - [Original Spec](https://github.com/regen-network/regen-ledger/tree/v1.0.0/x/group/spec)
   - [Proposed Spec](./x/group/spec/README.md)
   - [Diff](./x/group/spec/00_diff.md)
 
