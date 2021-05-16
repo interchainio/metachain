@@ -4,6 +4,17 @@ DAO's are an increasing commonplace framework within blockchain ecosystems. They
 allow for inclusive institutions and collective decision making. This section
 goes over the main features of the DAO module.
 
+## Polity
+
+A polity is a political entity, a 
+
+```proto
+message Polity {
+    group_id 
+}
+
+```
+
 ## Proposal
 
 The base of every governance system is a proposal, the ability for the group to
@@ -28,7 +39,7 @@ message Proposal {
     // the deposit associated with the proposal
     repeated sdk.Coin deposit = 4;
 
-    // usually a url representing the case of the proposal
+    // usually a url making the case for the proposal
     string content = 5; 
 
     // additional meta data that might be used as part of 
@@ -68,7 +79,7 @@ and can be altered. An example of such an interface is as follows:
 ```golang
 type DecisionPolicy interface {
     // This is called when a decision policy is first added to a DAO to ensure that
-    // all the parameters are correctly set
+    // all the parameters within it are correctly set
     ValidateBasic() error
 
     // Vote is called for every received vote and can manipulate the tally and
@@ -126,6 +137,10 @@ message Vote {
 
     // their choice
     uint64 choice = 3;
+
+    // the weight behing their choice. This defaults to the entire weight 
+    // of the member if none is described.
+    string weight = 4;
 
     // additional data
     bytes meta_data = 4; 
