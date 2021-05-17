@@ -1,24 +1,82 @@
 syntax = "proto3";
 package metachain.dao.v1beta1;
 
+import "cosmos/base/v1beta1/coin.proto";
+
 option go_package = "github.com/interchainberlin/metachain/x/dao";
+
+service Msg {
+    rpc CreatePolity(MsgCreatePolityRequest) returns (MsgCreatePolityResponse);
+    
+    rpc UpdatePolity(MsgUpdatePolityRequest) returns (MsgUpdatePolityResponse);
+
+    rpc CreateProposal(MsgCreateProposalRequest) returns (MsgCreateProposalResponse);
+    
+    rpc Vote(MsgVoteRequest) returns (MsgVoteResponse);
+
+    rpc DelegateVote(MsgDelegateVoteRequest) returns (MsgDelegateVoteResponse);
+
+    rpc Exec(MsgExecRequest) returns (MsgExecResponse);
+}
+
+message MsgCreatePolityRequest {
+    string group_address = 1;
+
+    // decision_policy is the updated group account decision policy.
+    google.protobuf.Any decision_policy = 2 [(cosmos_proto.accepts_interface) = "DecisionPolicy"];
+    
+    // proposal_filter filters incoming proposals.
+    google.protobuf.Any proposal_filter = 3 [(cosmos_proto.accepts_interface) = "ProposalFilter"];
+    
+    // the voting window for each proposal
+    google.protobuf.Duration voting_period = 4;
+
+    // indicates whether proposals can be received from anyone or members only
+    bool public = 5;
+}
+
+message MsgCreateProposalResponse { }
+
+message MsgUpdatePolityRequest {
+    string group_address = 1;
+
+    // decision_policy is the updated group account decision policy.
+    google.protobuf.Any decision_policy = 2 [(cosmos_proto.accepts_interface) = "DecisionPolicy"];
+    
+    // proposal_filter filters incoming proposals.
+    google.protobuf.Any proposal_filter = 3 [(cosmos_proto.accepts_interface) = "ProposalFilter"];
+    
+    // the voting window for each proposal
+    google.protobuf.Duration voting_period = 4;
+
+    // indicates whether proposals can be received from anyone or members only
+    bool public = 5; 
+}
+
+message MsgUpdatePolityResponse{}
 
 // MsgCreateProposalRequest is the Msg/CreateProposal request type.
 message MsgCreateProposalRequest {
     option (gogoproto.goproto_getters) = false;
 
-    // address is the group account address.
-    string address = 1;
+    // group address is the group account address.
+    string group_address = 1;
     
-    // proposers are the account addresses of the proposers.
-    // Proposers signatures will be counted as yes votes.
-    repeated string proposers = 2;
+    // proposer is the account address of the proposers.
+    string proposer = 2;
+
+    // the deposit associated with the proposal
+    repeated cosmos.base.v1beta1.Coin deposit = 3;
+
+    // content represents some endpoint which can lead 
+    // a discussion / forum or simple state the case for // the proposal
+    string content = 5;
     
     // metadata is any arbitrary metadata to attached to the proposal.
     bytes metadata = 3;
 
-    // msgs is a list of Msgs that will be executed if the proposal passes.
-    repeated google.protobuf.Any msgs = 4;
+    // messages is a list of Msgs that will be executed if the proposal passes.
+    repeated google.protobuf.Any messages = 4;
 }
 
 // MsgCreateProposalResponse is the Msg/CreateProposal response type.
@@ -30,22 +88,38 @@ message MsgCreateProposalResponse {
 
 // MsgVoteRequest is the Msg/Vote request type.
 message MsgVoteRequest {
-
     // proposal is the unique ID of the proposal.
     uint64 proposal_id = 1;
-    
-    // voter is the voter account address.
+
+    // voter is the voter's address.
     string voter = 2;
-    
+
     // choice is the voter's choice on the proposal.
     Choice choice = 3;
 
-    // metadata is any arbitrary metadata to attached to the vote.
-    bytes metadata = 4;
+    // the weight behind their choice. This defaults to the entire weight 
+    // of the member if none is described. This allows for split voting.
+    string weight = 4;
 }
 
 // MsgVoteResponse is the Msg/Vote response type.
 message MsgVoteResponse { }
+
+message MsgDelegateVoteRequest { 
+    // the account transferring their voting power
+    string delegator = 1;
+
+    // the proposal their referring to
+    uint64 proposal_id = 2;
+
+    // the receiving of the voting power
+    string candidate = 3;
+
+    // the weight they are transferring the delegation to
+    string weight = 4; 
+}
+
+message MsgDelegateVoteResponse { }
 
 // MsgExecRequest is the Msg/Exec request type.
 message MsgExecRequest {

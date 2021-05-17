@@ -121,5 +121,8 @@ message GroupAccount {
 
     // the group_id the account is associated with
     uint64 group_id = 3;
+
+    // metadata is any arbitrary metadata attached to the group account.
+    bytes metadata = 4;
 }
 ```

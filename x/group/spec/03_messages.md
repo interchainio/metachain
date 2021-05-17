@@ -4,7 +4,7 @@ order: 3
 
 # Msg Service
 
-## Msg/CreateGroup
+## MsgCreateGroup
 
 A new group can be created with the `MsgCreateGroupRequest`, which has an admin address, a list of members and some optional metadata bytes.
 
@@ -12,7 +12,7 @@ A new group can be created with the `MsgCreateGroupRequest`, which has an admin 
 
 It's expecting to fail if metadata length is greater than some `MaxMetadataLength`.
 
-## Msg/UpdateGroupMembers
+## MsgUpdateGroupMembers
 
 Group members can be updated with the `UpdateGroupMembersRequest`.
 
@@ -22,7 +22,7 @@ In the list of `MemberUpdates`, an existing member can be removed by setting its
 
 It's expecting to fail if the signer is not the admin of the group.
 
-## Msg/UpdateGroupAdmin
+## MsgUpdateGroupAdmin
 
 The `UpdateGroupAdminRequest` can be used to update a group admin.
 
@@ -30,7 +30,7 @@ The `UpdateGroupAdminRequest` can be used to update a group admin.
 
 It's expecting to fail if the signer is not the admin of the group.
 
-## Msg/UpdateGroupMetadata
+## MsgUpdateGroupMetadata
 
 The `UpdateGroupMetadataRequest` can be used to update a group metadata.
 
@@ -40,7 +40,7 @@ It's expecting to fail if:
 - new metadata length is greater than some `MaxMetadataLength`.
 - the signer is not the admin of the group.
 
-## Msg/CreateGroupAccount
+## MsgCreateGroupAccount
 
 A new group account can be created with the `MsgCreateGroupAccountRequest`, which has an admin address, a group id, a decision policy and some optional metadata bytes.
 
@@ -48,7 +48,7 @@ A new group account can be created with the `MsgCreateGroupAccountRequest`, whic
 
 It's expecting to fail if metadata length is greater than some `MaxMetadataLength`.
 
-## Msg/UpdateGroupAccountAdmin
+## MsgUpdateGroupAccountAdmin
 
 The `UpdateGroupAccountAdminRequest` can be used to update a group account admin.
 
@@ -56,7 +56,7 @@ The `UpdateGroupAccountAdminRequest` can be used to update a group account admin
 
 It's expecting to fail if the signer is not the admin of the group account.
 
-## Msg/UpdateGroupAccountMetadata
+## MsgUpdateGroupAccountMetadata
 
 The `UpdateGroupAccountMetadataRequest` can be used to update a group account metadata.
 

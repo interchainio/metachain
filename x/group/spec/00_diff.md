@@ -25,4 +25,8 @@ that matter.
 
 ## Add Differential Groups
 
-A different
+A differential group extends a regular group by using slices. It structures 
+the group membership and membership changes in such a way as to efficiently 
+persist multiple states. This is beneficial when requiring group snapshots 
+which may be needed for proposals where weight is counted at the start of the
+proposal.

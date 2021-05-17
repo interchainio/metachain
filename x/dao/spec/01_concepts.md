@@ -6,20 +6,29 @@ goes over the main features of the DAO module.
 
 ## Polity
 
-A polity is a political entity, a 
+A polity is a political entity, a group coupled with a governance system.
 
 ```proto
 message Polity {
-    uint64 group_id = 1;
+    // the address of the group account. This is also used to obtain the group info and members
+    string address = 1;
 
     // decision_policy is the updated group account decision policy.
-    google.protobuf.Any decision_policy = 3 [(cosmos_proto.accepts_interface) = "DecisionPolicy"];
+    google.protobuf.Any decision_policy = 2 [(cosmos_proto.accepts_interface) = "DecisionPolicy"];
     
-    // decision_policy is the updated group account decision policy.
-    google.protobuf.Any decision_policy = 3 [(cosmos_proto.accepts_interface) = "ProposalFilter"];
-}
+    // proposal_filter filters incoming proposals.
+    google.protobuf.Any proposal_filter = 3 [(cosmos_proto.accepts_interface) = "ProposalFilter"];
+    
+    // the voting window for each proposal
+    google.protobuf.Duration voting_period = 4;
 
+    // indicates whether proposals can be received from anyone or members only
+    bool public = 5;
+}
 ```
+
+> NOTE: Instead of storing the entire address it would be nice if the group
+> account was also indexed (as is a regular group)
 
 ## Proposal
 
@@ -40,7 +49,7 @@ message Proposal {
     // the group account that will execute the action, define 
     // the members eligible to vote as well as the proposal filter
     // and decision policy involved with the proposal
-    uint64 group_id = 3;
+    string group_address = 3;
 
     // the deposit associated with the proposal
     repeated sdk.Coin deposit = 4;
@@ -90,7 +99,11 @@ type DecisionPolicy interface {
 
     // Vote is called for every received vote and can manipulate the tally and
     // return the result of the proposal
-    Vote(vote Vote, tally Tally, votingDuration time.Duration) (Result, Tally)
+    Vote(vote Vote, tally Tally) (Result, Tally)
+
+    // End is called when a proposal passes the voting window and a verdict must
+    // be reached.
+    End(tally Tally) Result
 
     // If the result from a Vote is both complete and has passed, Execute is 
     // called which allows a decision policy to modify the set of messages before
@@ -124,12 +137,15 @@ message Tally {
     uint64 proposal_id = 1;
 
     // count is an array of the totals for each choice
-    repeated uint64 count = 2;
+    repeated Choice votes = 2; 
 
-    // relevant meta data
+    // relevant meta data. This is useful for caching infomation like the total 
+    // accumulated weight for each choice
     bytes meta_data = 3;
 }
 ```
+
+More information on the composition of choices can be found below. 
 
 ## Vote
 
@@ -147,16 +163,57 @@ message Vote {
     uint64 proposal_id = 2;
 
     // their choice
-    uint64 choice = 3;
+    Choice choice = 3;
 
-    // the weight behing their choice. This defaults to the entire weight 
-    // of the member if none is described.
+    // the weight behind their choice. This defaults to the entire weight 
+    // of the member if none is described. This allows for split voting.
     string weight = 4;
-
-    // additional data
-    bytes meta_data = 4; 
 }
 ```
+
+> NOTE: We could look to make this non breaking if we reserve 3 and handle
+> VoteOptions with a reasonable default
+
+### Choices
+
+Each vote contains a choice. What choices are really depends on the users of the
+dao and how they set up the proposal, the proposal filter and the decision
+policy. A choice is thus more a represenation of the index of possible choices. For
+example 0 = hasn't voted, 1 = no, 2 = yes and so forth. What's important to note
+is the degree of freedom of choices. Currently we represent a choice as a single
+byte which means a proposal is constrained to 256 options. This should be
+sufficient for most proposals but in the future we could set it as multiple
+bytes (i.e. uint32)
+
+```golang
+type Choice byte
+```
+
+Choices have a default 0. This should usually be something likes "hasn't voted"
+but could technically be anything.
+
+### DelegateVote
+
+A feature of governance that is important to port over to the dao
+module is the ability to delegate votes.
+
+```proto
+message DelegateVote {
+    // the account transferring their voting power
+    string delegator = 1;
+
+    // the proposal their referring to
+    uint64 proposal_id = 2;
+
+    // the receiving of the voting power
+    string candidate = 3;
+
+    // the weight they are transferring the delegation to
+    string weight = 4; 
+}
+```
+
+If a can
 
 
 

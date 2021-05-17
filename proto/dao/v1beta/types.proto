@@ -133,22 +133,11 @@ message Proposal {
 message Tally {
     option (gogoproto.goproto_getters) = false;
 
-    // yes_count is the weighted sum of yes votes.
-    string yes_count = 1;
-    
-    // no_count is the weighted sum of no votes.
-    string no_count = 2;
-    
-    // abstain_count is the weighted sum of abstainers
-    string abstain_count = 3;
-    
-    // veto_count is the weighted sum of vetoes.
-    string veto_count = 4;
+    repeated byte votes = 1;
 }
 
 // Vote represents a vote for a proposal.
 message Vote {
-
     // proposal is the unique ID of the proposal.
     uint64 proposal_id = 1;
     
@@ -160,8 +149,5 @@ message Vote {
 
     // metadata is any arbitrary metadata to attached to the vote.
     bytes metadata = 4;
-
-    // submitted_at is the timestamp when the vote was submitted.
-    google.protobuf.Timestamp submitted_at = 5 [(gogoproto.nullable) = false];
 }
 
