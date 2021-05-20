@@ -6,24 +6,30 @@ goes over the main features of the DAO module.
 
 ## Polity
 
-A polity is a political entity, a group coupled with a governance system.
+> NOTE: The terminology here is still subject to change.
+
+A polity is a political entity, a group of members coupled with a governance
+system and a communual account.
 
 ```proto
 message Polity {
     // the address of the group account. This is also used to obtain the group info and members
-    string address = 1;
+    Group group = 1;
+
+    // the account or address that collectively represents the polity
+    string account = 2;
 
     // decision_policy is the updated group account decision policy.
-    google.protobuf.Any decision_policy = 2 [(cosmos_proto.accepts_interface) = "DecisionPolicy"];
+    google.protobuf.Any decision_policy = 3 [(cosmos_proto.accepts_interface) = "DecisionPolicy"];
     
     // proposal_filter filters incoming proposals.
-    google.protobuf.Any proposal_filter = 3 [(cosmos_proto.accepts_interface) = "ProposalFilter"];
+    google.protobuf.Any proposal_filter = 4 [(cosmos_proto.accepts_interface) = "ProposalFilter"];
     
     // the voting window for each proposal
-    google.protobuf.Duration voting_period = 4;
+    google.protobuf.Duration voting_period = 5;
 
     // indicates whether proposals can be received from anyone or members only
-    bool public = 5;
+    bool public = 6;
 }
 ```
 
@@ -74,16 +80,24 @@ filter has a simple interface:
 
 ```golang
 type ProposalFilter interface {
-    Validate(group GroupAccount, proposal Proposal, otherProposals []Proposal) error
+    // Validate assesses the validity of a new proposal within a polity
+    Validate(group Group, proposal Proposal, otherProposals []Proposal) error
+
+    // Amend assesses whether the old porposal can be ammended with the new proposal
+    Amend(oldProposal, newProposal Proposal) error
+
+    // Withdraw assesses whether the proposer is able to withdraw their proposal
+    Withdraw(group Group, proposal Proposal) error
 }
 ```
 
 ### Deposit
 
-Each proposal also contauns a `deposit` field. Primarily this is used as a
+Each proposal also contains a `deposit` field. Primarily this is used as a
 deterrent for spam proposals by fining proposers who propose "bad" proposals.
-When this is not needed it can be left empty.
-
+When this is not needed it can be left empty. The funds of the proposal go
+directly to the account. It would thus be commong practice within the proposal
+to also request to get your deposit back.
 
 ## Decision Policy
 
