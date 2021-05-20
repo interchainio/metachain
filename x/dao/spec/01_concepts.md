@@ -94,8 +94,8 @@ message Proposal {
 ### Proposal Filter
 
 Other than the basic validation of the proposal, proposals can be constrained
-via a filter which can limit what a group account is capable of proposing. This
-filter has a simple interface:
+via a filter which can limit what a group account is capable of proposing,
+amending or withdrawing. This filter has the following interface:
 
 ```golang
 type ProposalFilter interface {
@@ -223,15 +223,18 @@ type Choice byte
 ```
 
 Choices have a default 0. This should usually be something likes "hasn't voted"
-but could technically be anything.
+but could technically be anything such as default yes unless someone votes no.
 
-### DelegateVote
+### Delegation
 
 A feature of governance that is important to port over to the dao
-module is the ability to delegate votes.
+module is the ability to delegate votes. Delegation could be seen on a per
+proposal basis or overall. Given its simplicity and that it is perhaps more 
+commonplace to trust someone's judgement overall then to trust them specifically
+for a proposal, we treat delegation (at least to begin with) as overall
 
 ```proto
-message DelegateVote {
+message Delegate {
     // the account transferring their voting power
     string delegator = 1;
 
@@ -246,7 +249,7 @@ message DelegateVote {
 }
 ```
 
-If a can
+A member can equally undelegate. 
 
 
 
