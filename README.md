@@ -13,9 +13,10 @@ An experimental chain to explore governance typologies within the Cosmos
 - Groups Module
   - [Proposed Spec](./x/group/spec/README.md)
     - [Concepts](./x/group/spec/01_concepts.md)
-    - [State](./x/group/spec/02_state.md)
-    - [Messages](./x/group/spec/03_messages.md)
-    - [Events](./x/group/spec/04_events.md)
+    - [Groups](./x/group/spec/02_groups.md)
+    - [State](./x/group/spec/03_state.md)
+    - [Messages](./x/group/spec/04_messages.md)
+    - [Events](./x/group/spec/05_events.md)
   - [Original Spec](https://github.com/regen-network/regen-ledger/tree/v1.0.0/x/group/spec)
   - [Diff](./x/group/spec/00_diff.md)
 

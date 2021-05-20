@@ -14,89 +14,45 @@ a group could be a single user, another group, a module such as `dao` or some
 equivalent that offers governance capabilities. It could even be an account 
 connected with off-chain governance.
 
-```proto
-// GroupInfo represents the high-level on-chain information for a group.
-message GroupInfo {
-
-    // group_id is the unique ID of the group.
-    uint64 group_id = 1;
-
-    // admin is the account address of the group's admin.
-    string admin = 2;
-    
-    // metadata is any arbitrary metadata to attached to the group.
-    bytes metadata = 3;
-
-    // slices keeps track of all the heights that snapshots of the membership
-    // set are stored
-    repeated uint64 slices = 4;
-
-    // total_weight is the current sum of the group members' weights.
-    string total_weight = 5;
-}
-```
-
-```proto
-message Member {
-    // address is the member's account address.
-    string address = 1;
-    
-    // weight is the member's voting weight that should be greater than 0.
-    string weight = 2;
-    
-    // metadata is any arbitrary metadata to attached to the member.
-    bytes metadata = 3;
-}
-```
-
-## Differential Group
-
-A differential group extends a regular group by using slices. It structures 
-the group membership and membership changes in such a way as to efficiently 
-persist multiple states. This is beneficial when requiring group snapshots 
-which may be needed for proposals. One can view this like the following interface:
+Groups can have different implementations largely depending on the tradeoffs
+between frequency of weight changes and membership changes, the size of the
+group, and the complexity of the decision policies. To unify these tradeoffs
+groups can be represented as the following interface:
 
 ```golang
-type DifferentialGroup interface {
-    // Returns the group membership at that height if it exists.
-    // Use a height of 0 to return the most current group
-    GetSlice(height int64) *Group
-    
-    // Creates a new slice at the current height
-    SetSlice() *Group
+type Group interface {
+    // Get's the current memberset and height. This also signals to the 
+    // group that a process requires the memberset and may need it at a later point.
+    GetMemberSet() (MemberSet, uint64)
 
-    // Returns all the slices that exist
-    Slices() []int64
+    // Get's a member at the current height
+    GetMember(member string) (Member, uint64)
 
-    // Deletes a slice when no other service requires it any longer
-    DeleteSlice(height int64)
+    // Returns the weight of a specific member at the specified height.
+    GetMemberAtHeight(member string, height uint64) (Member, error)
+
+    // Returns the member set at that height
+    GetMemberSetAtHeight(height uint64) (MemberSet, error)
+
+    // Returns all the heights that the group has knowledge of the MemberSet
+    GetAllMemberSetHeights() []uint64
+
+    // Signals that the MemberSet at that height is no longer needed by a process
+    ReleaseMemberSet(height uint64) 
+}
+
+type MemberSet []Member
+
+type Member struct {
+    address string
+    weight string
+    meta []byte
 }
 ```
+Note that this interface only pertains to reading the `Group`. Writes to group
+membership are subject to the individual concrete types.
 
-As an example, say the current height was 10 and we had a snapshot of the group
-at height 5. We would save the slice as representing the changes made between 5
-and 10.
-
-Group at height 10:
-
-`a` = 10
-`b` = 15
-`c` = 20
-
-Group at height 5:
-
-`a` = 10
-`b` = 10
-`d` = 10
-
-Slice:
-
-`b` = 10
-`c` = 0
-`d` = 10
-
-With the group at height 10 and the slice we could work backwards and obtain the
-group at height 5.
+This is covered more extensively in [Groups](./02_groups.md)
 
 ## Group Account
 
