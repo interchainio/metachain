@@ -88,6 +88,15 @@ message Proposal {
 
     // an array of messages to be executed upon acceptance
     repeated sdk.Msg messages = 7;
+
+    // When the proposal finishes
+    google.protobuf.Time deadline = 8;
+
+    // The current tally of the vote
+    Tally tally = 9;
+
+    // The final outcome of the proposal
+    Choice outcome = 9;
 }
 ```
 
@@ -102,8 +111,9 @@ type ProposalFilter interface {
     // Validate assesses the validity of a new proposal within a polity
     Validate(group Group, proposal Proposal, otherProposals []Proposal) error
 
-    // Amend assesses whether the old porposal can be ammended with the new proposal
-    Amend(oldProposal, newProposal Proposal) error
+    // Amend assesses whether the old proposal can be ammended with the new proposal.
+    // In addition to an error, Amend can also change the deadline of the proposal.
+    Amend(oldProposal, newProposal Proposal) (time.Time, error)
 
     // Withdraw assesses whether the proposer is able to withdraw their proposal
     Withdraw(group Group, proposal Proposal) error
@@ -136,7 +146,7 @@ type DecisionPolicy interface {
 
     // End is called when a proposal passes the voting window and a verdict must
     // be reached.
-    End(tally Tally) Result
+    End(tally Tally) bool
 
     // If the result from a Vote is both complete and has passed, Execute is 
     // called which allows a decision policy to modify the set of messages before
@@ -227,6 +237,9 @@ but could technically be anything such as default yes unless someone votes no.
 
 ### Delegation
 
+> FIXME: I'm not completely convinced about having delegation here. It doesn't
+> strike me as being too efficient especially when scaling to large groups
+
 A feature of governance that is important to port over to the dao
 module is the ability to delegate votes. Delegation could be seen on a per
 proposal basis or overall. Given its simplicity and that it is perhaps more 
@@ -250,6 +263,10 @@ message Delegate {
 ```
 
 A member can equally undelegate. 
+
+> NOTE: The concept of delegation could be purely handled within groups. When
+> one member delegates to another, the members merge into a single one - when
+> undelegating they split back into their respective weights.
 
 
 

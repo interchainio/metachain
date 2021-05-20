@@ -9,6 +9,97 @@ import "google/protobuf/timestamp.proto";
 import "cosmos_proto/cosmos.proto";
 import "google/protobuf/any.proto";
 
+// A polity is an account governed by a group
+message Polity {
+    // the account or address that collectively represents the polity
+    string account = 1;
+
+    // the group interface for reading member sets
+    google.protobuf.Any group = 2 [(cosmos_proto.accepts_interface) = "Group"];
+
+    // decision_policy is the updated group account decision policy.
+    google.protobuf.Any decision_policy = 3 [(cosmos_proto.accepts_interface) = "DecisionPolicy"];
+    
+    // proposal_filter filters incoming proposals.
+    google.protobuf.Any proposal_filter = 4 [(cosmos_proto.accepts_interface) = "ProposalFilter"];
+    
+    // the voting window for each proposal
+    google.protobuf.Duration voting_period = 5;
+
+    // indicates whether proposals can be received from anyone or members only
+    bool public = 6;
+
+    // indicates which account has control over the polity i.e. changing 
+    // the decision policy or the proposal filter. This allows for nested polity's 
+    // where a parent polity has partial governance over this polity. Leave it empty
+    // to indicate that the polity is soverign 
+    string parent = 7; 
+}
+
+// Proposal defines a group proposal.
+message Proposal {
+    // the unique id of the proposal
+    uint64 proposal_id = 1;
+
+    // the account proposing the action
+    string proposer = 2;
+
+    // the group account that will execute the action, define 
+    // the members eligible to vote as well as the proposal filter
+    // and decision policy involved with the proposal
+    string group_address = 3;
+
+    // the deposit associated with the proposal
+    repeated sdk.Coin deposit = 4;
+
+    // usually a url making the case for the proposal
+    string content = 5; 
+
+    // additional meta data that might be used as part of 
+    // decision policy
+    bytes metadata = 6; 
+
+    // an array of messages to be executed upon acceptance
+    repeated sdk.Msg messages = 7;
+
+    // When the proposal finishes
+    google.protobuf.Time deadline = 8;
+
+    // The current tally of the vote
+    Tally tally = 9;
+
+    // The final outcome of the proposal
+    Choice outcome = 9;
+}
+
+message Tally {
+    // the proposal the tally is tracking
+    uint64 proposal_id = 1;
+
+    // votes is an array of the choices made by group members
+    repeated Choice votes = 2; 
+
+    // relevant meta data. This is useful for caching infomation like the total 
+    // accumulated weight for each choice
+    bytes meta_data = 3;
+}
+
+// Vote represents a vote for a proposal.
+message Vote {
+    // the member of the group that voted
+    string voter = 1;
+
+    // the proposal that they are voting on
+    uint64 proposal_id = 2;
+
+    // their choice
+    Choice choice = 3;
+
+    // the weight behind their choice. This defaults to the entire weight 
+    // of the member if none is described. This allows for split voting.
+    string weight = 4;
+}
+
 // ThresholdDecisionPolicy implements the DecisionPolicy interface
 message ThresholdDecisionPolicy {
     option (cosmos_proto.implements_interface) = "DecisionPolicy";
@@ -20,134 +111,3 @@ message ThresholdDecisionPolicy {
     // Within this times votes and exec messages can be submitted.
     google.protobuf.Duration timeout = 2 [(gogoproto.nullable) = false];
 }
-
-// Proposal defines a group proposal. Any member of a group can submit a proposal
-// for a group account to decide upon.
-// A proposal consists of a set of `sdk.Msg`s that will be executed if the proposal
-// passes as well as some optional metadata associated with the proposal.
-message Proposal {
-    option (gogoproto.goproto_getters) = false;
-
-    // proposal_id is the unique id of the proposal.
-    uint64 proposal_id = 1;
-
-    // address is the group account address.
-    string address = 2;
-    
-    // metadata is any arbitrary metadata to attached to the proposal.
-    bytes metadata = 3;
-
-    // proposers are the account addresses of the proposers.
-    repeated string proposers = 4;
-    
-    // submitted_at is a timestamp specifying when a proposal was submitted.
-    google.protobuf.Timestamp submitted_at = 5 [(gogoproto.nullable) = false];
-    
-    // group_version tracks the version of the group that this proposal corresponds to.
-    // When group membership is changed, existing proposals from previous group versions will become invalid.
-    uint64 group_version = 6;
-
-    // group_account_version tracks the version of the group account that this proposal corresponds to.
-    // When a decision policy is changed, existing proposals from previous policy versions will become invalid.
-    uint64 group_account_version = 7;
-
-    // Status defines proposal statuses.
-    enum Status {
-        option (gogoproto.goproto_enum_prefix) = false;
-        
-        // An empty value is invalid and not allowed.
-        STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "ProposalStatusInvalid"];
-        
-        // Initial status of a proposal when persisted.
-        STATUS_SUBMITTED = 1 [(gogoproto.enumvalue_customname) = "ProposalStatusSubmitted"];
-        
-        // Final status of a proposal when the final tally was executed.
-        STATUS_CLOSED = 2 [(gogoproto.enumvalue_customname) = "ProposalStatusClosed"];
-        
-        // Final status of a proposal when the group was modified before the final tally.
-        STATUS_ABORTED = 3 [(gogoproto.enumvalue_customname) = "ProposalStatusAborted"];
-
-        // TODO: do we want to support a withdrawn operation?
-        // A proposal can be deleted before the voting start time by the owner. When this happens the final status
-        // is Withdrawn.
-        //        STATUS_WITHDRAWN = 4 [(gogoproto.enumvalue_customname) = "Withdrawn"];
-    }
-
-    // Status represents the high level position in the life cycle of the proposal. Initial value is Submitted.
-    Status status = 8;
-
-    // Result defines types of proposal results.
-    enum Result {
-        option (gogoproto.goproto_enum_prefix) = false;
-
-        // An empty value is invalid and not allowed
-        RESULT_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "ProposalResultInvalid"];
-        
-        // Until a final tally has happened the status is unfinalized
-        RESULT_UNFINALIZED = 1 [(gogoproto.enumvalue_customname) = "ProposalResultUnfinalized"];
-       
-        // Final result of the tally
-        RESULT_ACCEPTED = 2 [(gogoproto.enumvalue_customname) = "ProposalResultAccepted"];
-        
-        // Final result of the tally
-        RESULT_REJECTED = 3 [(gogoproto.enumvalue_customname) = "ProposalResultRejected"];
-    }
-
-    // result is the final result based on the votes and election rule. Initial value is unfinalized.
-    // The result is persisted so that clients can always rely on this state and not have to replicate the logic.
-    Result result = 9;
-
-    // vote_state contains the sums of all weighted votes for this proposal.
-    Tally vote_state = 10 [(gogoproto.nullable) = false];
-
-    // timeout is the timestamp of the block where the proposal execution times out. Header times of the votes and execution messages
-    // must be before this end time to be included in the election. After the timeout timestamp the proposal can not be
-    // executed anymore and should be considered pending delete.
-    google.protobuf.Timestamp timeout = 11 [(gogoproto.nullable) = false];
-
-    // ExecutorResult defines types of proposal executor results.
-    enum ExecutorResult {
-        option (gogoproto.goproto_enum_prefix) = false;
-        
-        // An empty value is not allowed.
-        EXECUTOR_RESULT_UNSPECIFIED = 0  [(gogoproto.enumvalue_customname) = "ProposalExecutorResultInvalid"];
-        
-        // We have not yet run the executor.
-        EXECUTOR_RESULT_NOT_RUN = 1 [(gogoproto.enumvalue_customname) = "ProposalExecutorResultNotRun"];
-        
-        // The executor was successful and proposed action updated state.
-        EXECUTOR_RESULT_SUCCESS = 2 [(gogoproto.enumvalue_customname) = "ProposalExecutorResultSuccess"];
-        
-        // The executor returned an error and proposed action didn't update state.
-        EXECUTOR_RESULT_FAILURE = 3 [(gogoproto.enumvalue_customname) = "ProposalExecutorResultFailure"];
-    }
-
-    // executor_result is the final result based on the votes and election rule. Initial value is NotRun.
-    ExecutorResult executor_result = 12;
-
-    // msgs is a list of Msgs that will be executed if the proposal passes.
-    repeated google.protobuf.Any msgs = 13;
-}
-
-// Tally represents the sum of weighted votes.
-message Tally {
-    option (gogoproto.goproto_getters) = false;
-
-    repeated byte votes = 1;
-}
-
-// Vote represents a vote for a proposal.
-message Vote {
-    // proposal is the unique ID of the proposal.
-    uint64 proposal_id = 1;
-    
-    // voter is the account address of the voter.
-    string voter = 2;
-    
-    // choice is the voter's choice on the proposal.
-    Choice choice = 3;
-
-    // metadata is any arbitrary metadata to attached to the vote.
-    bytes metadata = 4;
-}
-

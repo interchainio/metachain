@@ -10,17 +10,25 @@ service Msg {
     
     rpc UpdatePolity(MsgUpdatePolityRequest) returns (MsgUpdatePolityResponse);
 
+    rpc DestroyPolity(MsgDestroyPolityRequest) returns (MsgDestroyPolityResponse);
+
     rpc CreateProposal(MsgCreateProposalRequest) returns (MsgCreateProposalResponse);
+    
+    rpc AmendProposal(MsgAmendProposalRequest) returns (MsgAmendProposalResponse);
+    
+    rpc WithdrawProposal(MsgWithdrawProposalRequest) returns (MsgWithdrawProposalResponse);
     
     rpc Vote(MsgVoteRequest) returns (MsgVoteResponse);
 
-    rpc DelegateVote(MsgDelegateVoteRequest) returns (MsgDelegateVoteResponse);
+    rpc Delegate(MsgDelegateRequest) returns (MsgDelegateResponse);
+
+    rpc Undelegate(MsgUndelegateRequest) returns (MsgUndelegateResponse);
 
     rpc Exec(MsgExecRequest) returns (MsgExecResponse);
 }
 
 message MsgCreatePolityRequest {
-    string group_address = 1;
+    uint64 group_id = 1;
 
     // decision_policy is the updated group account decision policy.
     google.protobuf.Any decision_policy = 2 [(cosmos_proto.accepts_interface) = "DecisionPolicy"];
@@ -33,12 +41,18 @@ message MsgCreatePolityRequest {
 
     // indicates whether proposals can be received from anyone or members only
     bool public = 5;
+
+    // an optional parent polity which has administative power over the polity
+    string parent_address = 6;
 }
 
-message MsgCreateProposalResponse { }
+message MsgCreateProposalResponse { 
+    // the collective address of the polity
+    string address = 1;
+}
 
 message MsgUpdatePolityRequest {
-    string group_address = 1;
+    string address = 1;
 
     // decision_policy is the updated group account decision policy.
     google.protobuf.Any decision_policy = 2 [(cosmos_proto.accepts_interface) = "DecisionPolicy"];
@@ -51,6 +65,15 @@ message MsgUpdatePolityRequest {
 
     // indicates whether proposals can be received from anyone or members only
     bool public = 5; 
+
+    // an optional parent polity which has administative power over the polity
+    string parent_address = 6;
+}
+
+message MsgUpdatePolityResponse{}
+
+message MsgDestroyPolityRequest{
+    string address = 1;
 }
 
 message MsgUpdatePolityResponse{}
@@ -60,7 +83,7 @@ message MsgCreateProposalRequest {
     option (gogoproto.goproto_getters) = false;
 
     // group address is the group account address.
-    string group_address = 1;
+    string address = 1;
     
     // proposer is the account address of the proposers.
     string proposer = 2;
@@ -69,14 +92,14 @@ message MsgCreateProposalRequest {
     repeated cosmos.base.v1beta1.Coin deposit = 3;
 
     // content represents some endpoint which can lead 
-    // a discussion / forum or simple state the case for // the proposal
+    // a discussion / forum or simple state the case for the proposal
     string content = 5;
     
     // metadata is any arbitrary metadata to attached to the proposal.
-    bytes metadata = 3;
+    bytes metadata = 6;
 
     // messages is a list of Msgs that will be executed if the proposal passes.
-    repeated google.protobuf.Any messages = 4;
+    repeated google.protobuf.Any messages = 7;
 }
 
 // MsgCreateProposalResponse is the Msg/CreateProposal response type.
@@ -85,6 +108,29 @@ message MsgCreateProposalResponse {
     // proposal is the unique ID of the proposal.
     uint64 proposal_id = 1;
 }
+
+message MsgAmendProposalRequest {
+    // unique id of the proposal
+    uint64 proposal_id = 1;
+
+    // content represents some endpoint which can lead 
+    // a discussion / forum or simple state the case for // the proposal
+    string content = 2;
+
+    // metadata is any arbitrary metadata to attached to the proposal.
+    bytes metadata = 3;
+
+    // messages is a list of Msgs that will be executed if the proposal passes.
+    repeated google.protobuf.Any messages = 4;
+}
+
+message MsgAmendProposalResponse {}
+
+message MsgWithdrawProposalRequest {
+    uint64 proposal_id = 1;
+}
+
+message MsgWithdrawProposalResponse {}
 
 // MsgVoteRequest is the Msg/Vote request type.
 message MsgVoteRequest {
@@ -105,21 +151,31 @@ message MsgVoteRequest {
 // MsgVoteResponse is the Msg/Vote response type.
 message MsgVoteResponse { }
 
-message MsgDelegateVoteRequest { 
+message MsgDelegateRequest { 
     // the account transferring their voting power
     string delegator = 1;
 
-    // the proposal their referring to
-    uint64 proposal_id = 2;
-
     // the receiving of the voting power
-    string candidate = 3;
+    string candidate = 2;
 
     // the weight they are transferring the delegation to
-    string weight = 4; 
+    string weight = 3; 
 }
 
-message MsgDelegateVoteResponse { }
+message MsgDelegateResponse {}
+
+message MsgUndelegateRequest { 
+    // the delegator
+    string delegator = 1;
+
+    // the address being removed of the delegation
+    string candidate = 2;
+
+    // the weight they are transferring the delegation to
+    string weight = 3; 
+}
+
+message MsgUndelegateResponse {}
 
 // MsgExecRequest is the Msg/Exec request type.
 message MsgExecRequest {
@@ -132,4 +188,4 @@ message MsgExecRequest {
 }
 
 // MsgExecResponse is the Msg/Exec request type.
-message MsgExecResponse { }
+message MsgExecResponse {}
