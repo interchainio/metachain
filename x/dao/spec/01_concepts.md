@@ -13,11 +13,11 @@ system and a communual account.
 
 ```proto
 message Polity {
-    // the address of the group account. This is also used to obtain the group info and members
-    Group group = 1;
-
     // the account or address that collectively represents the polity
-    string account = 2;
+    string account = 1;
+
+    // the group interface for reading member sets
+    google.protobuf.Any group = 2 [(cosmos_proto.accepts_interface) = "Group"];
 
     // decision_policy is the updated group account decision policy.
     google.protobuf.Any decision_policy = 3 [(cosmos_proto.accepts_interface) = "DecisionPolicy"];
@@ -30,11 +30,30 @@ message Polity {
 
     // indicates whether proposals can be received from anyone or members only
     bool public = 6;
+
+    // indicates which account has control over the polity i.e. changing 
+    // the decision policy or the proposal filter. This allows for nested polity's 
+    // where a parent polity has partial governance over this polity. Leave it empty
+    // to indicate that the polity is soverign 
+    string parent = 7; 
 }
 ```
 
-> NOTE: Instead of storing the entire address it would be nice if the group
-> account was also indexed (as is a regular group)
+The typical flow would be:
+    1. Set up a group
+    2. Set up a polity linking to the group
+
+Optional extra steps
+    3. Change the group admin to the polity account (this allows proposals to
+    dictate membership changes)
+
+    4. Setup another polity with the same group but with a different decision policy 
+    or for a different category of policies within the same group
+
+    5. Create another group and another polity linked to that group. Set the parent
+    of the new polity as the old one and set the admin of the new group to the old 
+    polity and you have an elected council.
+
 
 ## Proposal
 
@@ -68,7 +87,7 @@ message Proposal {
     bytes metadata = 6; 
 
     // an array of messages to be executed upon acceptance
-    repeated sdk.Msg messages = 10;
+    repeated sdk.Msg messages = 7;
 }
 ```
 
