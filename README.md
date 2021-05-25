@@ -39,6 +39,7 @@ An experimental chain to explore governance typologies within the Cosmos
   - [PolicyKit](https://policykit.readthedocs.io/en/latest/index.html)
   - [Colony](https://colony.io/)
   - [Gnosis Safe](https://gnosis-safe.io/)
+  - [Commonwealth](https://commonwealth.im/)
 
 ---
 

@@ -7,3 +7,4 @@ aims at fulfilling.
 
 - [Chain-wide Governance](./governance.md)
 - [Multi-Sig Party](./multi-sig.md)
+- [Off-Chain Governance](./off-chain.md)
