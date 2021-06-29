@@ -10,6 +10,8 @@ An experimental chain to explore governance typologies within the Cosmos
 - Background
   - [Groups/Gov Sync Discussion](https://github.com/cosmos/cosmos-sdk/discussions/9066)
 
+- [ADR-043: Gov <> Groups Design](adr/adr-043-gov-groups-design.md)
+
 - Groups Module
   - [Proposed Spec](./x/group/spec/README.md)
     - [Concepts](./x/group/spec/01_concepts.md)
